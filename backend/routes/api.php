@@ -21,6 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('/leads', [LeadController::class, 'store']);
 Route::get('/leads', [LeadController::class, 'store']);
+Route::post('follow-ups', [FollowUpController::class, 'store']); // POST method only
+Route::patch('follow-ups/{id}/status', [FollowUpController::class, 'updateStatus']); 
+
 
 
 // Route::apiResource('leads', LeadController::class);
