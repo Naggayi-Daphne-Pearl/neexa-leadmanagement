@@ -51,13 +51,13 @@ const App = () => {
           status: newStatus,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to update follow-up status");
       }
-  
+
       const updatedFollowUp = await response.json();
-  
+
       // Optionally update the selectedLead's followUps with the updated status
       setSelectedLead((prevLead) => ({
         ...prevLead,
@@ -69,7 +69,7 @@ const App = () => {
       setError(error.message);
     }
   };
-  
+
   const handleScheduleFollowUp = async (scheduledAt, status) => {
     if (selectedLead) {
       try {
@@ -123,10 +123,10 @@ const App = () => {
       ) : (
         <LeadsList leads={leads} onSelectLead={handleSelectLead} />
       )}
+      <FollowUpList />
 
       {selectedLead && (
         <div>
-          <FollowUpList leadId={selectedLead.id} />
           <ScheduleFollowUp
             leadId={selectedLead.id}
             onSchedule={handleScheduleFollowUp}

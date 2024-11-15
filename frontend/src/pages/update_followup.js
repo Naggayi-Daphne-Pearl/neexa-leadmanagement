@@ -1,39 +1,63 @@
-import React from "react";
-import { Button } from "react-bootstrap";
-import { toast } from "react-toastify";
-import axios from "axios";
+import React, { useState } from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
 
-const UpdateFollowUpStatus = ({ followUpId, userRole, currentStatus }) => {
-  const handleStatusUpdate = async (newStatus) => {
+const UpdateFollowUpStatus = ({ followUpId, currentStatus, onUpdate }) => {
+  const [show, setShow] = useState(false);
+  const [status, setStatus] = useState(currentStatus);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
-      // Update status through API (assumes API endpoint exists)
-      const response = await axios.put(`http://127.0.0.1:8000/api/follow-ups/${followUpId}`, {
-        status: newStatus,
-      });
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/follow-ups/${followUpId}/status`,
+        { status }
+      );
 
-      toast.success("Follow-up status updated successfully!");
+      if (response.status === 200) {
+        onUpdate(response.data.status); // Update the status in the parent component
+        handleClose(); // Close the modal
+      }
     } catch (error) {
-      toast.error("Error updating follow-up status.");
+      console.error('Error updating status:', error);
     }
   };
 
-  return userRole === "Admin" || userRole === "Sales Manager" ? (
-    <div>
-      {currentStatus !== "Completed" && (
-        <Button
-          variant="success"
-          onClick={() => handleStatusUpdate("Completed")}
-        >
-          Mark as Completed
-        </Button>
-      )}
-      {currentStatus !== "Missed" && (
-        <Button variant="danger" onClick={() => handleStatusUpdate("Missed")}>
-          Mark as Missed
-        </Button>
-      )}
-    </div>
-  ) : null;
+  return (
+    <>
+      <Button variant="warning" onClick={handleShow}>Update Status</Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update Follow-Up Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="status">
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                as="select"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                required
+              >
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Missed">Missed</option>
+              </Form.Control>
+            </Form.Group>
+            <Button variant="primary" type="submit" className='my-5'>
+              Update Status
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
 };
 
 export default UpdateFollowUpStatus;
