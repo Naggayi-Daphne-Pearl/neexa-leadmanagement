@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const CreateLead = ({ onCreate }) => {
   const [leadData, setLeadData] = useState({
@@ -28,8 +29,11 @@ const CreateLead = ({ onCreate }) => {
 
     if (response.ok) {
       const data = await response.json();
+      toast.success("Follow-up scheduled successfully!");
       onCreate(data); // Pass the new lead data to the parent component
       setLeadData({ name: "", email: "", phone: "" }); // Reset form
+    } else {
+      toast.error("Error scheduling follow-up.");
     }
   };
 
@@ -65,7 +69,9 @@ const CreateLead = ({ onCreate }) => {
         />
       </Form.Group>
 
-      <Button type="submit">Create Lead</Button>
+      <Button type="submit" className="container my-5">
+        Create Lead
+      </Button>
     </Form>
   );
 };

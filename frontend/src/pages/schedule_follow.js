@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const ScheduleFollowUp = ({ userRole }) => {
-  // Initial state
-  const [leadId, setLeadId] = useState("");
+const ScheduleFollowUp = ({ leadId }) => {
   const [scheduledAt, setScheduledAt] = useState("");
   const [status, setStatus] = useState("Pending");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!leadId || !email || !scheduledAt) {
       toast.error("All fields are required.");
       return;
@@ -28,50 +25,34 @@ const ScheduleFollowUp = ({ userRole }) => {
       return;
     }
 
+    setLoading(true);
     try {
-      // Send data to API (assumes API endpoint exists)
-      const response = await axios.post("/api/follow-ups", {
-        lead_id: leadId,
-        email,
-        scheduled_at: scheduledAt,
-        status
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/follow-ups",
+        {
+          lead_id: leadId,
+          scheduled_at: scheduledAt,
+          status,
+        }
+      );
+
       toast.success("Follow-up scheduled successfully!");
     } catch (error) {
       toast.error("Error scheduling follow-up.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-dark">
-    <Container className="my-5 ">
-      <Row className="align-items-center">
-        {/* Form Section with Box Shadow */}
-        <Col md={6} className="h-100" >
-          <div className="p-4 shadow-lg h-100 bg-white">
-            <p className="text-center mb-4 text-sm text-gray">Schedule Follow-Up</p>
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={8}>
+          <div className="p-4 shadow-lg bg-white rounded">
+            <h3 className="text-center mb-4">Schedule Follow-Up</h3>
             <Form onSubmit={handleSubmit}>
-              <Form.Group controlId="leadId" className="my-4">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Lead ID"
-                  value={leadId}
-                  onChange={(e) => setLeadId(e.target.value)}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="email" className="my-4">
-                <Form.Control
-                  type="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="scheduledAt" className="my-4">
+              <Form.Group controlId="scheduledAt" className="mb-3">
+                <Form.Label>Scheduled At</Form.Label>
                 <Form.Control
                   type="datetime-local"
                   value={scheduledAt}
@@ -80,7 +61,8 @@ const ScheduleFollowUp = ({ userRole }) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="status" className="my-4">
+              <Form.Group controlId="status" className="mb-3">
+                <Form.Label>Status</Form.Label>
                 <Form.Control
                   as="select"
                   value={status}
@@ -92,25 +74,17 @@ const ScheduleFollowUp = ({ userRole }) => {
                 </Form.Control>
               </Form.Group>
 
-              <Button variant="dark" type="submit" className="w-100">
-                Schedule Follow-Up
+              <Button variant="primary" type="submit" className="w-100" disabled={loading}>
+                {loading ? <Spinner animation="border" size="sm" /> : "Schedule Follow-Up"}
               </Button>
             </Form>
           </div>
         </Col>
-
-        {/* Image Section */}
-        <Col md={6} className="text-center">
-          <img
-            src="/signupimage.png"  // Replace with your image URL
-            alt="Schedule Follow-Up"
-            className="img-fluid rounded shadow-lg"
-          />
-        </Col>
       </Row>
     </Container>
-    </div>
   );
 };
 
 export default ScheduleFollowUp;
+
+

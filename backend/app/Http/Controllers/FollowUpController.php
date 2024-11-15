@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\FollowUp;
 use App\Events\FollowUpStatusChanged;
+
 class FollowUpController extends Controller
 {
- public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
@@ -39,5 +40,12 @@ class FollowUpController extends Controller
         }
 
         return response()->json($followUp);
+    }
+
+    // New index method
+    public function index()
+    {
+        $followUps = FollowUp::all();
+        return response()->json($followUps);
     }
 }

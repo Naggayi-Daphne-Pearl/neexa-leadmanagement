@@ -7,7 +7,7 @@ const UpdateFollowUpStatus = ({ followUpId, userRole, currentStatus }) => {
   const handleStatusUpdate = async (newStatus) => {
     try {
       // Update status through API (assumes API endpoint exists)
-      const response = await axios.put(`/api/follow-ups/${followUpId}`, {
+      const response = await axios.put(`http://127.0.0.1:8000/api/follow-ups/${followUpId}`, {
         status: newStatus,
       });
 
