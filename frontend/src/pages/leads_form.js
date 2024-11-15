@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Toast } from "react-bootstrap";
+import { useUserContext } from "../context/UserContext";
 
 const CreateLeadForm = () => {
   // State for form data, validation errors, and response handling
@@ -12,6 +13,9 @@ const CreateLeadForm = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  
+  // Get the context to store the userId
+  const { setLeadId } = useUserContext();
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -78,6 +82,8 @@ const CreateLeadForm = () => {
             email: "",
             phone: "",
           });
+
+          setLeadId(data.id); 
         } else {
           setToastMessage("Failed to create lead. Please try again.");
         }

@@ -7,14 +7,19 @@ use App\Models\FollowUp;
 use App\Events\FollowUpStatusChanged;
 class FollowUpController extends Controller
 {
-    public function store(Request $request)
+ public function store(Request $request)
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
-            'scheduled_at' => 'required|date|after:now',
+            'scheduled_at' => 'required|date',
+            'status' => 'required|string',
         ]);
 
-        $followUp = FollowUp::create($request->all());
+        $followUp = FollowUp::create([
+            'lead_id' => $request->lead_id,
+            'scheduled_at' => $request->scheduled_at,
+            'status' => $request->status,
+        ]);
 
         return response()->json($followUp, 201);
     }

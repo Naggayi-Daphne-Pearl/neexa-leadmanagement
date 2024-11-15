@@ -9,7 +9,7 @@ class Lead extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'email', 'phone'];
-    
+
     public function followUps()
     {
         return $this->hasMany(FollowUp::class);

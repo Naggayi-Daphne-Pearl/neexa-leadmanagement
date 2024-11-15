@@ -9,6 +9,8 @@ class LeadController extends Controller
 {
     public function index()
     {
+        
+    $leads = Lead::with('followUps')->get();
         return response()->json(Lead::all());
     }
 

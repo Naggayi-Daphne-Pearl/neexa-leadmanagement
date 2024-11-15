@@ -1,55 +1,44 @@
-import React from "react";
-import { Table, Badge } from "react-bootstrap";
+import React, { useState } from "react";
 
-const FollowUpList = () => {
-  // Dummy data for follow-ups
-  const followUps = [
-    { id: 1, lead_id: 101, scheduled_at: "2024-11-15 10:00", status: "Pending" },
-    { id: 2, lead_id: 102, scheduled_at: "2024-11-16 14:30", status: "Completed" },
-    { id: 3, lead_id: 103, scheduled_at: "2024-11-17 09:00", status: "Missed" },
-    { id: 4, lead_id: 104, scheduled_at: "2024-11-18 16:00", status: "Pending" },
-  ];
+const ScheduleFollowUp = ({ leadId, onSchedule }) => {
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [status, setStatus] = useState("Pending");
 
-  // Render the follow-up list
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSchedule(scheduledAt, status);
+    setScheduledAt(""); // Clear the input
+    setStatus("Pending"); // Reset status
+  };
+
   return (
-    <div className="container my-5">
-      <h3 className="text-center mb-4">Follow-Up List</h3>
-
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Follow-Up ID</th>
-            <th>Lead ID</th>
-            <th>Scheduled At</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {followUps.map((followUp) => (
-            <tr key={followUp.id}>
-              <td>{followUp.id}</td>
-              <td>{followUp.lead_id}</td>
-              <td>{followUp.scheduled_at}</td>
-              <td>
-                {/* Render the status with appropriate color */}
-                <Badge
-                  bg={
-                    followUp.status === "Pending"
-                      ? "warning"
-                      : followUp.status === "Completed"
-                      ? "success"
-                      : "danger"
-                  }
-                >
-                  {followUp.status}
-                </Badge>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h3>Schedule Follow-Up for Lead ID: {leadId}</h3>
+      <div>
+        <label htmlFor="scheduledAt">Scheduled At:</label>
+        <input
+          type="datetime-local"
+          id="scheduledAt"
+          value={scheduledAt}
+          onChange={(e) => setScheduledAt(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="status">Status:</label>
+        <select
+          id="status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+      <button type="submit">Schedule Follow-Up</button>
+    </form>
   );
 };
 
-export default FollowUpList;
+export default ScheduleFollowUp;
