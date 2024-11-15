@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
-    // Display a listing of the resource.
     public function index()
     {
-        return Lead::all();
+        return response()->json(Lead::all());
     }
 
-    // Store a newly created resource in storage.
     public function store(Request $request)
     {
         $request->validate([
@@ -27,13 +25,12 @@ class LeadController extends Controller
         return response()->json($lead, 201);
     }
 
-    // Display the specified resource.
     public function show(Lead $lead)
     {
-        return $lead;
+        return response()->json($lead); 
     }
 
-    // Update the specified resource in storage.
+    // Update the specified lead in storage.
     public function update(Request $request, Lead $lead)
     {
         $request->validate([
@@ -44,10 +41,10 @@ class LeadController extends Controller
 
         $lead->update($request->all());
 
+        // Returning the updated lead as JSON
         return response()->json($lead);
     }
 
-    // Remove the specified resource from storage.
     public function destroy(Lead $lead)
     {
         $lead->delete();
