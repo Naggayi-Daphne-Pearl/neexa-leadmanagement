@@ -1,24 +1,28 @@
 <?php
 
+// app/Jobs/MarkMissedFollowUps.php
+
 namespace App\Jobs;
 
 use App\Models\FollowUp;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Carbon\Carbon;
 
-class MarkMissedFollowUps implements ShouldQueue
+class MarkMissedFollowUps
 {
-    use Dispatchable, Queueable;
-
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
     public function handle()
     {
-        $followUps = FollowUp::where('status', 'Pending')
-                             ->where('scheduled_at', '<', now())
-                             ->get();
+        $overdueFollowUps = FollowUp::where('status', '!=', 'Completed')
+            ->where('scheduled_at', '<', Carbon::now())
+            ->get();
 
-        foreach ($followUps as $followUp) {
+        foreach ($overdueFollowUps as $followUp) {
             $followUp->update(['status' => 'Missed']);
         }
     }
 }
+

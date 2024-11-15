@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use Illuminate\Http\Request;
-
+use App\Events\FollowUpStatusChanged;
+use App\Models\FollowUp;
 class LeadController extends Controller
 {
     public function index()
@@ -52,5 +53,22 @@ class LeadController extends Controller
         $lead->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:Pending,Completed,Missed',
+        ]);
+
+        $followUp = FollowUp::findOrFail($id);
+        $followUp->update(['status' => $request->status]);
+
+        // Trigger the event if the status is updated to 'Missed'
+        if ($request->status === 'Missed') {
+            event(new FollowUpStatusChanged($followUp));
+        }
+
+        return response()->json($followUp);
     }
 }
