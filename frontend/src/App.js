@@ -4,14 +4,15 @@ import FollowUpList from "./pages/follow_up_list";
 import ScheduleFollowUp from "./pages/follow_up";
 import UpdateFollowUpStatus from "./pages/follow_up_status.list";
 import CreateLeadForm from "./pages/leads_form";
+import { Modal, Button } from "react-bootstrap";
 
 const App = () => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
-  const [loading, setLoading] = useState(true);  
-  const [error, setError] = useState(null);     
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch leads from API when component mounts
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -20,25 +21,25 @@ const App = () => {
           throw new Error("Failed to fetch leads");
         }
         const data = await response.json();
-        setLeads(data); 
+        setLeads(data);
         setLoading(false);
       } catch (err) {
-        setError(err.message); 
-        setLoading(false); 
+        setError(err.message);
+        setLoading(false);
       }
     };
 
     fetchLeads();
-  }, []);  
+  }, []);
 
   const handleCreateLead = (newLead) => {
     setLeads((prevLeads) => [...prevLeads, newLead]);
+    setIsModalOpen(false); // Close the modal after submission
   };
 
   const handleSelectLead = (lead) => {
     setSelectedLead(lead);
   };
-
   const handleUpdateFollowUpStatus = async (followUpId, newStatus) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/follow-ups`, {
@@ -69,7 +70,6 @@ const App = () => {
     }
   };
   
-
   const handleScheduleFollowUp = async (scheduledAt, status) => {
     if (selectedLead) {
       try {
@@ -102,13 +102,24 @@ const App = () => {
   };
 
   return (
-    <div>
-      <CreateLeadForm onCreate={handleCreateLead} />
-      
+    <div className="container my-5">
+      <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+        Create Lead
+      </Button>
+
+      <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create New Lead</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <CreateLeadForm onCreate={handleCreateLead} />
+        </Modal.Body>
+      </Modal>
+
       {loading ? (
-        <p>Loading leads...</p> // Show loading message
+        <p>Loading leads...</p>
       ) : error ? (
-        <p>Error: {error}</p> // Show error message if there's an issue
+        <p>Error: {error}</p>
       ) : (
         <LeadsList leads={leads} onSelectLead={handleSelectLead} />
       )}

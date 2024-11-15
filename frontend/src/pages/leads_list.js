@@ -3,16 +3,29 @@ import { Button } from 'react-bootstrap';
 
 const LeadsList = ({ leads, onSelectLead }) => {
   return (
-    <div>
-      <h3>Leads List</h3>
-      <ul>
-        {leads.map((lead) => (
-          <li key={lead.id}>
-            <span>{lead.name}</span>
-            <Button onClick={() => onSelectLead(lead)}>Add Follow-Up</Button>
-          </li>
-        ))}
-      </ul>
+    <div className="table-responsive">
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {leads.map((lead) => (
+            <tr key={lead.id}>
+              <td>{lead.name}</td>
+              <td>{lead.phone}</td>
+              <td>
+                <Button variant="success" onClick={() => onSelectLead(lead)}>
+                  Follow Up
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
