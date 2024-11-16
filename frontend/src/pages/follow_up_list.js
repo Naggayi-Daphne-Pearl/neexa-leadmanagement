@@ -1,10 +1,10 @@
+// FollowUpList.js
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Container, Alert } from 'react-bootstrap';
 import UpdateFollowUpStatus from './update_followup';
 
-const FollowUpList = () => {
+const FollowUpList = ({ user }) => {
   const [followUps, setFollowUps] = useState([]);
-  const [userRole, setUserRole] = useState('Sales Rep');
 
   useEffect(() => {
     const fetchFollowUps = async () => {
@@ -16,26 +16,15 @@ const FollowUpList = () => {
     fetchFollowUps();
   }, []);
 
-  const switchRole = () => {
-    setUserRole((prevRole) => {
-      if (prevRole === 'Sales Rep') return 'Sales Manager';
-      if (prevRole === 'Sales Manager') return 'Admin';
-      return 'Sales Rep';
-    });
-  };
-
   return (
     <Container className="my-5">
-      <h3 className="text-center mb-4">Follow-Ups</h3>
-      <Button onClick={switchRole} className="mb-3">
-        Switch Role (Current: {userRole})
-      </Button>
+      <h3 className="text-center mb-4">Follow-Ups (Role: {user.role})</h3>
       <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Scheduled Time</th>
             <th>Status</th>
-            <th>Action</th>
+            {user.role === 'Admin' && <th>Action</th>}
           </tr>
         </thead>
         <tbody>
@@ -43,8 +32,8 @@ const FollowUpList = () => {
             <tr key={followUp.id}>
               <td>{new Date(followUp.scheduled_at).toLocaleString()}</td>
               <td>{followUp.status}</td>
-              <td>
-                {(userRole === 'Admin' || userRole === 'Sales Manager') ? (
+              {user.role === 'Admin' ? (
+                <td>
                   <UpdateFollowUpStatus
                     followUpId={followUp.id}
                     currentStatus={followUp.status}
@@ -56,10 +45,16 @@ const FollowUpList = () => {
                       );
                     }}
                   />
-                ) : (
-                  <Alert variant="danger">You cannot update the status. Contact Admin</Alert>
-                )}
-              </td>
+                </td>
+              ) : (
+                <td>
+                  {user.role === 'Sales Manager' ? (
+                    <Alert variant="warning">View Only</Alert>
+                  ) : (
+                    <Alert variant="danger">No Access</Alert>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

@@ -6,7 +6,7 @@ import UpdateFollowUpStatus from "./follow_up_status.list";
 import CreateLeadForm from "./leads_form";
 import { Modal, Button } from "react-bootstrap";
 
-const MainPage = () => {
+const MainPage = ({ user }) => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -123,7 +123,7 @@ const MainPage = () => {
       ) : (
         <LeadsList leads={leads} onSelectLead={handleSelectLead} />
       )}
-      <FollowUpList />
+      <FollowUpList user={user} />
 
       {selectedLead && (
         <div>
