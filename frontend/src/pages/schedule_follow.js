@@ -6,13 +6,12 @@ import axios from "axios";
 const ScheduleFollowUp = ({ leadId }) => {
   const [scheduledAt, setScheduledAt] = useState("");
   const [status, setStatus] = useState("Pending");
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!leadId || !email || !scheduledAt) {
+    if (!leadId || !scheduledAt) {
       toast.error("All fields are required.");
       return;
     }

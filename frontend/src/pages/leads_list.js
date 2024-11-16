@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Table, Container } from 'react-bootstrap';
 
 const LeadsList = ({ leads, onSelectLead }) => {
   return (
-    <div className="table-responsive">
-      <table className="table table-striped">
+    <Container className="my-5">
+      <h3 className="text-center mb-4">Leads List</h3>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Name</th>
@@ -25,8 +26,8 @@ const LeadsList = ({ leads, onSelectLead }) => {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </Table>
+    </Container>
   );
 };
 

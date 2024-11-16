@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 const CreateLead = ({ onCreate }) => {
@@ -29,50 +29,62 @@ const CreateLead = ({ onCreate }) => {
 
     if (response.ok) {
       const data = await response.json();
-      toast.success("Follow-up scheduled successfully!");
-      onCreate(data); // Pass the new lead data to the parent component
-      setLeadData({ name: "", email: "", phone: "" }); // Reset form
+      toast.success("Lead created successfully!");
+      onCreate(data);
+      setLeadData({ name: "", email: "", phone: "" });
     } else {
-      toast.error("Error scheduling follow-up.");
+      toast.error("Error creating lead.");
     }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="name">
-        <Form.Label>Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="name"
-          value={leadData.name}
-          onChange={handleChange}
-        />
-      </Form.Group>
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={6}>
+          <div className="p-4 shadow-lg bg-white rounded">
+            <h3 className="text-center mb-4">Create Lead</h3>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="name" className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={leadData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-      <Form.Group controlId="email">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          type="email"
-          name="email"
-          value={leadData.email}
-          onChange={handleChange}
-        />
-      </Form.Group>
+              <Form.Group controlId="email" className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={leadData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-      <Form.Group controlId="phone">
-        <Form.Label>Phone</Form.Label>
-        <Form.Control
-          type="text"
-          name="phone"
-          value={leadData.phone}
-          onChange={handleChange}
-        />
-      </Form.Group>
+              <Form.Group controlId="phone" className="mb-3">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="phone"
+                  value={leadData.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-      <Button type="submit" className="container my-5">
-        Create Lead
-      </Button>
-    </Form>
+              <Button variant="primary" type="submit" className="w-100 my-5">
+                Create Lead
+              </Button>
+            </Form>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

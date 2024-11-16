@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Container } from 'react-bootstrap';
 import UpdateFollowUpStatus from './update_followup';
 
 const FollowUpList = () => {
   const [followUps, setFollowUps] = useState([]);
-  const [userRole, setUserRole] = useState('Sales Rep'); // Default role
+  const [userRole, setUserRole] = useState('Sales Rep');
 
   useEffect(() => {
     const fetchFollowUps = async () => {
@@ -25,12 +25,12 @@ const FollowUpList = () => {
   };
 
   return (
-    <div>
-      <h3>Follow-Ups</h3>
+    <Container className="my-5">
+      <h3 className="text-center mb-4">Follow-Ups</h3>
       <Button onClick={switchRole} className="mb-3">
         Switch Role (Current: {userRole})
       </Button>
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Scheduled Time</th>
@@ -62,7 +62,7 @@ const FollowUpList = () => {
           ))}
         </tbody>
       </Table>
-    </div>
+    </Container>
   );
 };
 
