@@ -1,9 +1,10 @@
+// components/MainPage.js
 import React, { useState, useEffect } from "react";
 import LeadsList from "./leads_list";
 import FollowUpList from "./follow_up_list";
 import ScheduleFollowUp from "./follow_up";
 import CreateLeadForm from "./leads_form";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Alert } from "react-bootstrap";
 
 const MainPage = ({ user }) => {
   const [leads, setLeads] = useState([]);
@@ -37,14 +38,16 @@ const MainPage = ({ user }) => {
   };
 
   const handleSelectLead = (lead) => {
-    setSelectedLead(lead);
-    if (user.role === 'Admin') {
+    if (user.role === "Admin") {
+      setSelectedLead(lead);
       setIsModalOpen(true);
+    } else {
+      alert("Only admins can schedule follow-ups.");
     }
   };
 
   const handleScheduleFollowUp = async (scheduledAt, status) => {
-    if (selectedLead) {
+    if (selectedLead && user.role === "Admin") {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/follow-ups", {
           method: "POST",
@@ -70,18 +73,30 @@ const MainPage = ({ user }) => {
       } catch (error) {
         setError(error.message);
       }
+    } else {
+      alert("Only admins can schedule follow-ups.");
     }
   };
 
   return (
     <div className="container my-5">
-      <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-        Create Lead
-      </Button>
+      {user.role === "Admin" && (
+        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+          Create Lead
+        </Button>
+      )}
+
+      {user.role !== "Admin" && (
+        <Alert variant="warning" className="my-3">
+          Only admins can create leads and follow-ups.
+        </Alert>
+      )}
 
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedLead ? "Schedule Follow-Up" : "Create New Lead"}</Modal.Title>
+          <Modal.Title>
+            {selectedLead ? "Schedule Follow-Up" : "Create New Lead"}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedLead ? (
