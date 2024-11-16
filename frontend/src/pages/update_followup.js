@@ -4,7 +4,6 @@ import axios from "axios";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
-// Initialize Pusher and Echo
 window.Pusher = Pusher;
 
 const UpdateFollowUpStatus = ({ followUpId, currentStatus, onUpdate }) => {
@@ -16,9 +15,7 @@ const UpdateFollowUpStatus = ({ followUpId, currentStatus, onUpdate }) => {
 
   useEffect(() => {
     const echo = new Echo({
-      broadcaster: "pusher",
-      key: "your-pusher-key",  // Replace with your actual Pusher key
-      cluster: "your-cluster", // Replace with your actual Pusher cluster
+   
       encrypted: true,
     });
 
