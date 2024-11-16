@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import UpdateFollowUpStatus from './update_followup';
+
 const FollowUpList = () => {
   const [followUps, setFollowUps] = useState([]);
+  const [userRole, setUserRole] = useState('Sales Rep'); // Default role
 
   useEffect(() => {
     const fetchFollowUps = async () => {
@@ -14,9 +16,20 @@ const FollowUpList = () => {
     fetchFollowUps();
   }, []);
 
+  const switchRole = () => {
+    setUserRole((prevRole) => {
+      if (prevRole === 'Sales Rep') return 'Sales Manager';
+      if (prevRole === 'Sales Manager') return 'Admin';
+      return 'Sales Rep';
+    });
+  };
+
   return (
     <div>
       <h3>Follow-Ups</h3>
+      <Button onClick={switchRole} className="mb-3">
+        Switch Role (Current: {userRole})
+      </Button>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -31,17 +44,19 @@ const FollowUpList = () => {
               <td>{new Date(followUp.scheduled_at).toLocaleString()}</td>
               <td>{followUp.status}</td>
               <td>
-                <UpdateFollowUpStatus
-                  followUpId={followUp.id}
-                  currentStatus={followUp.status}
-                  onUpdate={(newStatus) => {
-                    setFollowUps((prevFollowUps) =>
-                      prevFollowUps.map((fu) =>
-                        fu.id === followUp.id ? { ...fu, status: newStatus } : fu
-                      )
-                    );
-                  }}
-                />
+                {(userRole === 'Admin' || userRole === 'Sales Manager') && (
+                  <UpdateFollowUpStatus
+                    followUpId={followUp.id}
+                    currentStatus={followUp.status}
+                    onUpdate={(newStatus) => {
+                      setFollowUps((prevFollowUps) =>
+                        prevFollowUps.map((fu) =>
+                          fu.id === followUp.id ? { ...fu, status: newStatus } : fu
+                        )
+                      );
+                    }}
+                  />
+                )}
               </td>
             </tr>
           ))}

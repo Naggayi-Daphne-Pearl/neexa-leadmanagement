@@ -48,4 +48,11 @@ class FollowUpController extends Controller
         $followUps = FollowUp::all();
         return response()->json($followUps);
     }
+
+    public function update(Request $request, FollowUp $followUp)
+    {
+        $this->authorize('update', $followUp);
+
+        // Update logic here
+    }
 }
