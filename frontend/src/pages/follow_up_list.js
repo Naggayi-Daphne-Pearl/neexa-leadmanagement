@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Container } from 'react-bootstrap';
+import { Button, Table, Container, Alert } from 'react-bootstrap';
 import UpdateFollowUpStatus from './update_followup';
 
 const FollowUpList = () => {
@@ -44,7 +44,7 @@ const FollowUpList = () => {
               <td>{new Date(followUp.scheduled_at).toLocaleString()}</td>
               <td>{followUp.status}</td>
               <td>
-                {(userRole === 'Admin' || userRole === 'Sales Manager') && (
+                {(userRole === 'Admin' || userRole === 'Sales Manager') ? (
                   <UpdateFollowUpStatus
                     followUpId={followUp.id}
                     currentStatus={followUp.status}
@@ -56,6 +56,8 @@ const FollowUpList = () => {
                       );
                     }}
                   />
+                ) : (
+                  <Alert variant="danger">You cannot update the status. Contact Admin</Alert>
                 )}
               </td>
             </tr>
