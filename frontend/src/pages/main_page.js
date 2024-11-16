@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import LeadsList from "./leads_list";
 import FollowUpList from "./follow_up_list";
 import ScheduleFollowUp from "./follow_up";
-import UpdateFollowUpStatus from "./follow_up_status.list";
 import CreateLeadForm from "./leads_form";
 import { Modal, Button } from "react-bootstrap";
 
@@ -39,34 +38,8 @@ const MainPage = ({ user }) => {
 
   const handleSelectLead = (lead) => {
     setSelectedLead(lead);
-  };
-  const handleUpdateFollowUpStatus = async (followUpId, newStatus) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/follow-ups`, {
-        method: "PUT", // Assuming you use PUT for updates
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          status: newStatus,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update follow-up status");
-      }
-
-      const updatedFollowUp = await response.json();
-
-      // Optionally update the selectedLead's followUps with the updated status
-      setSelectedLead((prevLead) => ({
-        ...prevLead,
-        followUps: prevLead.followUps.map((followUp) =>
-          followUp.id === followUpId ? updatedFollowUp : followUp
-        ),
-      }));
-    } catch (error) {
-      setError(error.message);
+    if (user.role === 'Admin') {
+      setIsModalOpen(true);
     }
   };
 
@@ -90,7 +63,6 @@ const MainPage = ({ user }) => {
         }
 
         const followUp = await response.json();
-        // Optionally update selectedLead with the new follow-up data
         setSelectedLead((prevLead) => ({
           ...prevLead,
           followUps: [...(prevLead.followUps || []), followUp],
@@ -109,10 +81,14 @@ const MainPage = ({ user }) => {
 
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Lead</Modal.Title>
+          <Modal.Title>{selectedLead ? "Schedule Follow-Up" : "Create New Lead"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <CreateLeadForm onCreate={handleCreateLead} />
+          {selectedLead ? (
+            <ScheduleFollowUp leadId={selectedLead.id} onSchedule={handleScheduleFollowUp} />
+          ) : (
+            <CreateLeadForm onCreate={handleCreateLead} />
+          )}
         </Modal.Body>
       </Modal>
 
@@ -124,21 +100,6 @@ const MainPage = ({ user }) => {
         <LeadsList leads={leads} onSelectLead={handleSelectLead} />
       )}
       <FollowUpList user={user} />
-
-      {selectedLead && (
-        <div>
-          <ScheduleFollowUp
-            leadId={selectedLead.id}
-            onSchedule={handleScheduleFollowUp}
-          />
-          {selectedLead.followUps && selectedLead.followUps.length > 0 && (
-            <UpdateFollowUpStatus
-              followUpId={selectedLead.followUps[0].id}
-              onUpdate={handleUpdateFollowUpStatus}
-            />
-          )}
-        </div>
-      )}
     </div>
   );
 };
