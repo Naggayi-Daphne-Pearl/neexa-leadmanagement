@@ -10,6 +10,10 @@ const App = () => {
     setUser(user);
   };
 
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return (
     <Router>
       <Routes>
@@ -18,7 +22,7 @@ const App = () => {
         ) : (
           <Route
             path="/"
-            element={<MainPage user={user} />}
+            element={<MainPage user={user} onLogout={handleLogout} />}
           />
         )}
         <Route path="*" element={<Navigate to="/" />} />

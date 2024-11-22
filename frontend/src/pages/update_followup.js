@@ -4,7 +4,6 @@ import axios from "axios";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
-window.Pusher = Pusher;
 
 const UpdateFollowUpStatus = ({ followUpId, currentStatus, onUpdate }) => {
   const [show, setShow] = useState(false);
@@ -13,26 +12,26 @@ const UpdateFollowUpStatus = ({ followUpId, currentStatus, onUpdate }) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  useEffect(() => {
-    const echo = new Echo({
+  // useEffect(() => {
+  //   const echo = new Echo({
    
-      encrypted: true,
-    });
+  //     encrypted: true,
+  //   });
 
-    // Listen for FollowUpStatusChanged event
-    const channel = echo.channel("follow-ups");
+  //   // Listen for FollowUpStatusChanged event
+  //   const channel = echo.channel("follow-ups");
 
-    channel.listen("FollowUpStatusChanged", (event) => {
-      console.log("FollowUp Status Changed:", event);
-      if (event.followUp.id === followUpId) {
-        setStatus(event.followUp.status);
-      }
-    });
+  //   channel.listen("FollowUpStatusChanged", (event) => {
+  //     console.log("FollowUp Status Changed:", event);
+  //     if (event.followUp.id === followUpId) {
+  //       setStatus(event.followUp.status);
+  //     }
+  //   });
 
-    return () => {
-      channel.stopListening("FollowUpStatusChanged");
-    };
-  }, [followUpId]);
+  //   return () => {
+  //     channel.stopListening("FollowUpStatusChanged");
+  //   };
+  // }, [followUpId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -4,14 +4,16 @@ import LeadsList from "./leads_list";
 import FollowUpList from "./follow_up_list";
 import ScheduleFollowUp from "./follow_up";
 import CreateLeadForm from "./leads_form";
-import { Modal, Button, Alert } from "react-bootstrap";
+import { Modal, Button, Alert, Container, Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const MainPage = ({ user }) => {
+const MainPage = ({ user, onLogout }) => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -34,7 +36,7 @@ const MainPage = ({ user }) => {
 
   const handleCreateLead = (newLead) => {
     setLeads((prevLeads) => [...prevLeads, newLead]);
-    setIsModalOpen(false); // Close the modal after submission
+    setIsModalOpen(false);
   };
 
   const handleSelectLead = (lead) => {
@@ -78,20 +80,43 @@ const MainPage = ({ user }) => {
     }
   };
 
+  const handleLogout = () => {
+    onLogout();
+    navigate("/");
+  };
+
   return (
-    <div className="container my-5">
-      {user.role === "Admin" && (
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-          Create Lead
-        </Button>
-      )}
-
+    <Container className="my-5">
+      <Row className="mb-4">
+        <Col>
+          <h1 className="text-center">Welcome, {user.email}</h1>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col className="d-flex justify-content-center">
+          <Button variant="danger" onClick={handleLogout} className="mx-2">
+            Logout
+          </Button>
+          {user.role === "Admin" && (
+            <Button
+              variant="primary"
+              onClick={() => setIsModalOpen(true)}
+              className="mx-2"
+            >
+              Create Lead
+            </Button>
+          )}
+        </Col>
+      </Row>
       {user.role !== "Admin" && (
-        <Alert variant="warning" className="my-3">
-          Only admins can create leads and follow-ups.
-        </Alert>
+        <Row className="mb-4">
+          <Col>
+            <Alert variant="warning" className="text-center">
+              Only admins can create leads and follow-ups.
+            </Alert>
+          </Col>
+        </Row>
       )}
-
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -100,22 +125,34 @@ const MainPage = ({ user }) => {
         </Modal.Header>
         <Modal.Body>
           {selectedLead ? (
-            <ScheduleFollowUp leadId={selectedLead.id} onSchedule={handleScheduleFollowUp} />
+            <ScheduleFollowUp
+              leadId={selectedLead.id}
+              onSchedule={handleScheduleFollowUp}
+            />
           ) : (
             <CreateLeadForm onCreate={handleCreateLead} />
           )}
         </Modal.Body>
       </Modal>
-
-      {loading ? (
-        <p>Loading leads...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <LeadsList leads={leads} onSelectLead={handleSelectLead} />
-      )}
-      <FollowUpList user={user} />
-    </div>
+      <Row>
+        <Col>
+          {loading ? (
+            <p className="text-center">Loading leads...</p>
+          ) : error ? (
+            <Alert variant="danger" className="text-center">
+              Error: {error}
+            </Alert>
+          ) : (
+            <LeadsList leads={leads} onSelectLead={handleSelectLead} />
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <FollowUpList user={user} />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
